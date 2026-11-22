@@ -1,129 +1,122 @@
 # AeroWave Claims Concierge
 
-An **Agentforce** service agent for a fictional airline, AeroWave. Travelers use it to file a travel-disruption insurance claim, or check on one, in a single chat. It finds their booking, verifies their identity across systems, works out the payout from real flight-status data, and decides in seconds. Cases it can't safely decide go to a human reviewer, who approves or denies them **directly from Slack**.
+An Agentforce agent that settles travel-disruption insurance claims in seconds and routes the ones it can't verify to a human reviewer in Slack. Built on Data 360, Agentforce, Service Cloud, and Slack.
 
-[![Watch the demo](https://img.youtube.com/vi/HHdIy_w8P9Q/hqdefault.jpg)](https://www.youtube.com/watch?v=HHdIy_w8P9Q)
+**Demo video:** [Watch on YouTube](https://www.youtube.com/watch?v=HHdIy_w8P9Q) · **Live site:** [pzavar.github.io/aerowave-demo](https://pzavar.github.io/aerowave-demo/)
 
-▶️ **[Watch the demo on YouTube](https://www.youtube.com/watch?v=HHdIy_w8P9Q)**
-
----
-
-## The business problem
-
-When flights are delayed or canceled, an airline's insurance desk receives a flood of claims at once. Each one needs the same manual work: find the booking, confirm the claimant is the traveler, check what actually happened to the flight, look up the policy, and calculate the payout. Customers wait days for an answer that is usually simple, and agents spend their time on the easy cases instead of the hard ones.
-
-## What the agent does
-
-| Customer asks to… | Agent behavior |
-|---|---|
-| **File a new claim** | Asks for **one** identifier (booking reference or email), then runs identity matching and payout rules and gives a definite outcome: **approved with amount**, **not eligible**, or **sent to human review with a case number**. It never asks the customer what happened to the flight, because the flight data decides that. |
-| **Check an existing claim** | Looks up the claim by email, booking reference, or case number. For claims under review, it reports progress and the final decision once one is made. |
-| **Talk to a person** | Escalates to a live agent. |
-| **Anything else** | Politely steers back to claims and resists prompt-injection attempts. |
-
-### Decision logic
-
-- **Identity confidence score (0–100):** Compares the traveler's **loyalty profile** with the **booking record**. Email match = 55, phone = 30, first name = 10, postal code = 5.
-  - **≥ 80** → decided automatically
-  - **< 80** → a Case is created for human review
-- **First-name matching** goes beyond exact equality. Custom Apex (`NameMatchService`) handles nicknames (Bob ↔ Robert), punctuation, and typos (Levenshtein distance).
-- **Payout rules**, based on Data Cloud flight-status events and policy records:
-  - Canceled → **$300**
-  - Delayed 120+ min → **$150**
-  - Delayed < 120 min or on time → **$0**
-  - No flight-status record → **human review**
+> Aerowave Airlines is a fictional company. All customer data used in the demo is synthetic, and the datasets are not included in this repo.
 
 ---
 
-## Architecture
+## The problem
+
+When a flight is canceled, insured travelers file claims. The data needed to judge one claim lives in five systems that don't talk to each other: loyalty, reservations, flight operations, policies, and claims. So every claim waits for manual review, legitimate or not. And manual review under volume is exactly when duplicate claims slip through.
+
+Insurers can process claims fast or safely. This project shows both.
+
+## How it works
 
 ```mermaid
 flowchart LR
-    C([Customer chat]) --> R{Agent Router}
-    R -->|new claim| S[Claim Submission]
-    R -->|existing claim| T[Claim Status]
-    R --> E[Escalation / Off-topic]
-
-    S --> F1[GetClaimIdentityDetails]
-    F1 --> F2[Assess_Match_Confidence]
-    F2 --> A[[NameMatchService Apex]]
-    S --> F3[Compute_Payout_Amount]
-    S -->|needs review| F4[Create_Claim_Review_Case]
-
-    F4 --> CASE[(Case)]
-    CASE -->|record-triggered| SL[Claim_Review_Slack_Alert]
-    SL --> SLACK([Slack: reviewer clicks Approve / Deny])
-    SLACK --> RV[Review_Claim] --> CASE
-
-    T --> F5[Query_Disruption_Claims]
-    T --> F6[Get_Case_Status] --> CASE
-
-    subgraph DC [Data Cloud]
-      B[(Bookings)]
-      I[(Unified Individual + email/phone contact points)]
-      FS[(Flight Status Events)]
-      P[(Policies)]
-      CL[(Claims)]
-    end
-    F1 -.-> B & I & CL
-    F3 -.-> FS & P
-    F5 -.-> CL & P
+    A[Customer chats on website] --> B[Agentforce agent]
+    B --> C[Get identity from Data 360]
+    C --> D[Score match confidence]
+    D --> E[Compute payout from flight status]
+    E -->|Score 80+| F[Auto-approve payout]
+    E -->|Score below 80| G[Open Service Cloud case]
+    G --> H[Slack alert in #claims-review]
+    H --> I[Reviewer approves or denies in Slack]
+    I --> J[Case updated, customer sees result]
 ```
 
-### Built with
+1. A customer files a claim on the website with a booking reference or email.
+2. The agent pulls the customer's unified identity from Data 360, scores how well their records agree, and checks what actually happened to the flight.
+3. If the identity is clean, the agent approves the payout on the spot.
+4. If it isn't, the agent opens a case with a reviewer brief it writes itself, and Slack alerts the review team.
+5. The reviewer loops in fraud if needed, then approves or denies from Slack. The decision writes back to the case, and the customer's next status check reflects it.
 
-| Layer | What's used |
+## Architecture
+
+| Layer | What it does |
 |---|---|
-| **Agent** | Agentforce (Agent Script / Agent Builder): topic routing with a hyper-classifier, deterministic `if/else` reasoning, variable-gated actions |
-| **Data** | **Data Cloud:** Bookings, Claims, Policies, Flight Status Events, and identity resolution (Unified Individual, contact points), all built from **synthetic data** |
-| **Automation** | Flows: 6 autolaunched agent actions, 1 record-triggered flow, 1 screen flow launched from Slack |
-| **Code** | Apex invocable action for fuzzy name matching |
-| **Human in the loop** | Salesforce for Slack: reviewers get an alert and decide in Slack, which updates the Case |
+| **Data 360** (formerly Data Cloud) | Ingests five source files and links each person's loyalty and booking records with identity resolution (exact email, exact phone) |
+| **Agentforce** | Routes the conversation, collects one identifier, calls Flows in order, and enforces what the customer may and may not be told |
+| **Flows** | Do all the math, so the same input always gives the same score and payout |
+| **Apex** | `NameMatchService` handles fuzzy and nickname first-name matching (Mike and Michael) |
+| **Service Cloud** | Claims Review cases with Approved and Denied statuses |
+| **Slack** | Case alerts, fraud handoff, and a Slack-native approval form |
+| **Website** | Static site on GitHub Pages, hosting the agent through Salesforce Enhanced Chat |
 
----
+### Flows
 
-## Design choices worth noting
+| Flow | Purpose |
+|---|---|
+| `GetClaimIdentityDetails` | Resolves one identifier into paired loyalty and booking fields |
+| `Assess_Match_Confidence` | Scores the identity match and returns a route |
+| `Compute_Payout_Amount` | Checks flight status and returns the payout |
+| `Create_Claim_Review_Case` | Creates the review case with the Claims Review record type |
+| `Query_Disruption_Claims` | Looks up existing claims by email or reference |
+| `Get_Case_Status` | Looks up an escalated claim by case number |
+| `Claim_Review_Slack_Alert` | Posts new review cases to Slack with a Review Claim button |
+| `Review_Claim` | Slack-enabled approval form that updates the case |
 
-- **Deterministic outcomes, not LLM judgment.** Flows make the money decisions: identity score, routing, and payout amount. The LLM only handles the conversation and the order of steps.
-- **No data leaks through the chat.**
-  - The agent never reads stored email, phone, or postal code back to the customer.
-  - It never exposes internal IDs, case statuses, or confidence scores.
-  - Lookups by email or booking reference confirm only that a claim exists, never the decision or amount. Those identifiers aren't strong enough proof of who's asking.
-- **Defense against enumeration.** Case numbers are sequential, so the case-number status check reports *that* a claim was approved but never the dollar amount.
-- **No invented facts.** The agent only says a case exists if creating it succeeded. Each claim is judged only on values looked up in the current turn, so details from an earlier claim in the same chat can't carry over.
-- **Low-friction intake.** The agent asks for one identifier and never asks the customer to describe the disruption.
+### Confidence scoring
 
----
+| Field | Points |
+|---|---|
+| Email, exact match | 55 |
+| Phone, exact match | 30 |
+| First name, exact or fuzzy match | 10 |
+| Zip, exact match | 5 |
 
-## Known limitations & next steps
+A score of 80 or more is approved automatically. Anything lower goes to a person.
 
-This is a demo build. Before production I would add:
+### Payout rules
 
-1. **Claimant verification.** Today the identity score compares two *stored* records (loyalty vs. booking). It doesn't prove the person chatting is the traveler. Next step: a one-time passcode to the email or phone on file, or authenticated chat via Messaging verified-user context, before any decision is shared.
-2. **Persist auto-approved claims.** Auto-approved claims currently get an answer but no record is written. Next step: write a Claim record on every decision, to trigger payout fulfillment, block duplicate claims for the same booking, and keep an audit trail.
-3. **Test coverage and portability.** Add an Apex test class for `NameMatchService` (required for production deploys), and replace the hard-coded org URL and Slack IDs in the Slack alert flow with Custom Metadata.
-4. **Cleanup.** Remove earlier agent versions and default site classes from the retrieved metadata.
+| Flight status | Payout |
+|---|---|
+| Delayed 120+ minutes | $150 |
+| Canceled | $300 |
+| Delayed under 120 minutes | $0 |
 
----
+## Design decisions
 
-## Repository layout
+- **The model decides what to do, not what the numbers are.** Scores and payouts come from Flows, so they are deterministic and auditable.
+- **Confidence gates autonomy.** The agent only pays when every source agrees on who the customer is.
+- **Disclosure matches verification.** Customers never see their score or the threshold, because that would show a fraudster what to change next time. Status checks by case number never reveal dollar amounts, because case numbers are sequential.
+- **Humans stay in the loop.** Automation clears the routine claims so reviewers spend their time on the ones that need judgment.
 
-```
-force-app/main/default/
-├── aiAuthoringBundles/     # Agent Script definitions (the agent's topics, instructions, actions)
-├── genAiPlannerBundles/    # Compiled planner bundles + action input/output schemas
-├── bots/                   # Agent (Bot / BotVersion) configuration
-├── flows/                  # Agent actions, Slack alert, Slack review flow
-├── classes/                # NameMatchService (custom) + default Experience Cloud site classes
-└── permissionsets/         # Agent user permissions
-manifest/package.xml        # Metadata retrieved from the org
-```
+## Demo scenarios
 
-## Running it yourself
+| Customer | Input | Result |
+|---|---|---|
+| Jonathan | `jonathan.reyes88@example.com` | Score 100, $150 approved (delayed flight) |
+| Michael | `B2020` | Score 100, $300 approved (canceled flight) |
+| Mike, Michael's son | `B2021` | Score 40, case opened for review |
 
-```bash
-sf org login web --alias aerowave
-sf project deploy start --manifest manifest/package.xml --target-org aerowave
-```
+Mike has no loyalty account, so Data 360 links his booking to his father's profile through a shared phone number. His email and zip don't match. From the data alone, a son whose father booked his seat looks the same as someone booking a second seat to claim twice. The agent doesn't guess. A person decides.
 
-> The org also needs Agentforce and Data Cloud enabled, with the Bookings, Claims, Policies and Flight Status Events data objects and identity resolution set up, plus Salesforce for Slack for the review step. Those are org configuration and synthetic data, not deployable source in this repo.
+## Repository contents
+
+| Path | Contents |
+|---|---|
+| `force-app/main/default/aiAuthoringBundles/` | Agent script (`.agent`) |
+| `force-app/main/default/genAiPlannerBundles/` | Agent planner bundles and action input/output schemas |
+| `force-app/main/default/bots/` | Agent bot configuration |
+| `force-app/main/default/flows/` | Flow metadata |
+| `force-app/main/default/classes/` | `NameMatchService.cls` |
+| `force-app/main/default/permissionsets/` | Agent user permission sets |
+| `manifest/package.xml` | Manifest used to retrieve the metadata from the org |
+The website lives in its own repo, [pzavar/aerowave-demo](https://github.com/pzavar/aerowave-demo), and is live at [pzavar.github.io/aerowave-demo](https://pzavar.github.io/aerowave-demo/).
+
+## Limitations
+
+- Payouts are a simplified flat schedule. Real trip-disruption policies usually reimburse based on trip cost.
+- Email and booking-reference lookups search the seeded claim records. Cases created during a session are found by case number.
+- Slack review discussions stay in Slack. Only the decision writes back to the case.
+- No emails are sent. The support address in the agent's replies is fictional.
+- Running this requires a Salesforce org with Agentforce, Data 360, Service Cloud, and a connected Slack workspace.
+
+## Author
+
+Parham Hajzavar · [LinkedIn](https://www.linkedin.com/in/pzavar) · [parham.zavar@gmail.com](mailto:parham.zavar@gmail.com)
