@@ -86,27 +86,18 @@ A score of 80 or more is approved automatically. Anything lower goes to a person
 - **Disclosure matches verification.** Customers never see their score or the threshold, because that would show a fraudster what to change next time. Status checks by case number never reveal dollar amounts, because case numbers are sequential.
 - **Humans stay in the loop.** Automation clears the routine claims so reviewers spend their time on the ones that need judgment.
 
-## Demo scenarios
-
-| Customer | Input | Result |
-|---|---|---|
-| Jonathan | `jonathan.reyes88@example.com` | Score 100, $150 approved (delayed flight) |
-| Michael | `B2020` | Score 100, $300 approved (canceled flight) |
-| Mike, Michael's son | `B2021` | Score 40, case opened for review |
-
-Mike has no loyalty account, so Data 360 links his booking to his father's profile through a shared phone number. His email and zip don't match. From the data alone, a son whose father booked his seat looks the same as someone booking a second seat to claim twice. The agent doesn't guess. A person decides.
-
 ## Repository contents
 
 | Path | Contents |
 |---|---|
-| `force-app/main/default/aiAuthoringBundles/` | Agent script (`.agent`) |
-| `force-app/main/default/genAiPlannerBundles/` | Agent planner bundles and action input/output schemas |
-| `force-app/main/default/bots/` | Agent bot configuration |
-| `force-app/main/default/flows/` | Flow metadata |
+| `force-app/main/default/aiAuthoringBundles/` | Agent script (`.agent`) for the active agent version |
+| `force-app/main/default/genAiPlannerBundles/` | Compiled planner bundle and action input/output schemas |
+| `force-app/main/default/bots/` | Agent definition and active version (v5) |
+| `force-app/main/default/flows/` | The eight Flows listed above |
 | `force-app/main/default/classes/` | `NameMatchService.cls` |
-| `force-app/main/default/permissionsets/` | Agent user permission sets |
+| `force-app/main/default/permissionsets/` | Agent permission sets |
 | `manifest/package.xml` | Manifest used to retrieve the metadata from the org |
+
 The website lives in its own repo, [pzavar/aerowave-demo](https://github.com/pzavar/aerowave-demo), and is live at [pzavar.github.io/aerowave-demo](https://pzavar.github.io/aerowave-demo/).
 
 ## Limitations

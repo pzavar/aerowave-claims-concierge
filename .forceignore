@@ -10,3 +10,8 @@ package.xml
 
 # LWC Jest
 **/__tests__/**
+# Salesforce-managed metadata, kept out of this repo on future retrieves
+**/permissionsets/sfdcInternalInt__*
+**/permissionsets/sfdc_aiplanner_service_permset*
+**/permissionsets/Experience_Profile_Manager*
+**/flows/sfdc_default_*
