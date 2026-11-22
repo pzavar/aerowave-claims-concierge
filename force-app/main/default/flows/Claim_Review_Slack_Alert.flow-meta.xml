@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Post_Claim_Alert_to_Slack</name>
+        <label>Post Claim Alert to Slack</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>slackPostMessage</actionName>
+        <actionType>slackPostMessage</actionType>
+        <connector>
+            <targetReference>Review_Claim_Action</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>slackAppIdForToken</name>
+            <value>
+                <stringValue>A01RDL2NJAH</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackWorkspaceIdForToken</name>
+            <value>
+                <stringValue>T0C9RR0EQ4C</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackConversationId</name>
+            <value>
+                <stringValue>C0C9TDKK1MH</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackMessage</name>
+            <value>
+                <elementReference>Alert_Message</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackPostMessage</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Review_Claim_Action</name>
+        <label>Review Claim Action</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>Review_Claim</actionName>
+        <actionType>slackSendMessageToLaunchFlow</actionType>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>ActionInput__slackAppIdForToken</name>
+            <value>
+                <stringValue>A03269G3DNE</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>ActionInput__slackWorkspaceIdForToken</name>
+            <value>
+                <stringValue>T0C9RR0EQ4C</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>ActionInput__slackConversationId</name>
+            <value>
+                <stringValue>C0C9TDKK1MH</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>ActionInput__slackMessage</name>
+            <value>
+                <stringValue>Review this claim.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>ActionInput__buttonLabel</name>
+            <value>
+                <stringValue>Review Claim</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>ActionInput__slackMessageTimestamp</name>
+            <value>
+                <elementReference>Post_Claim_Alert_to_Slack.slackMessageTimestamp</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Review_Claim</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>68.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <environments>Default</environments>
+    <interviewLabel>Claims Review Slack Alert {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Claims Review Slack Alert</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterFormula>  {!$Record.RecordType.DeveloperName} = &quot;Claims_Review&quot;</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Post_Claim_Alert_to_Slack</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>Alert_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>New claim needs review
+  Case: {!$Record.CaseNumber}
+  Subject: {!$Record.Subject}
+  Open in Salesforce:https://orgfarm-f64c756a98-dev-ed.develop.lightning.force.com/lightning/r/Case/{!$Record.Id}/view</text>
+    </textTemplates>
+</Flow>

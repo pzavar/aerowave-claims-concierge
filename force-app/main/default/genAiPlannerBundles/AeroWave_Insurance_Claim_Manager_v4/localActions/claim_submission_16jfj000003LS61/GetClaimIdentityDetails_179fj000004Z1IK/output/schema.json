@@ -1,0 +1,102 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "BookingEmail" : {
+      "title" : "Booking Email",
+      "description" : "Email associated with the booking",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "BookingFirstName" : {
+      "title" : "Booking First Name",
+      "description" : "First name on the booking",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "BookingID" : {
+      "title" : "Booking ID",
+      "description" : "Booking record identifier",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "BookingPhone" : {
+      "title" : "Booking Phone",
+      "description" : "Phone associated with the booking",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "BookingZip" : {
+      "title" : "Booking Zip",
+      "description" : "Postal code on the booking",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "Date" : {
+      "title" : "Date",
+      "description" : "Flight date",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "FlightNumber" : {
+      "title" : "Flight Number",
+      "description" : "Flight number associated with the booking",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "LoyaltyEmail" : {
+      "title" : "Loyalty Email",
+      "description" : "Loyalty program email on file",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "LoyaltyFirstName" : {
+      "title" : "Loyalty First Name",
+      "description" : "First name on the loyalty account",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "LoyaltyPhone" : {
+      "title" : "Loyalty Phone",
+      "description" : "Loyalty program phone on file",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "LoyaltyZip" : {
+      "title" : "Loyalty Zip",
+      "description" : "Postal code on the loyalty account",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "matchFound" : {
+      "title" : "Match Found",
+      "description" : "True if a matching booking was found",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>v1</fullName>
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Hi, I&apos;m the Aerowave Airlines Claims Concierge. I can help you check the status of an existing travel disruption insurance claim or file a new one. How can I help you today?</message>
+                <messageIdentifier>aff5e844-f229-4df5-8c55-9d6a517868e8</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>91a31d69-4cbf-4bd9-aac1-8fe23dd4f2f6</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>2a4be0e8-60e4-4be9-afb4-994ee42cf2ec</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Welcome</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Welcome</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Sorry, it looks like something has gone wrong. Please try again or ask to speak with a representative.</message>
+                <messageIdentifier>3de750f9-c25a-4919-a578-020949aa4121</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>b7191726-2ded-4ee8-a0da-674ba62edcab</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>8160635a-bb1a-4002-a5da-f29431d78934</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Rich_Content_Error_Handling</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Error Handler</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
+            <stepIdentifier>c0e31e76-3f51-4600-886f-326d2b68004b</stepIdentifier>
+            <type>SystemMessage</type>
+        </botSteps>
+        <developerName>Transfer_To_Agent</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Transfer To Agent</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <citationsEnabled>false</citationsEnabled>
+    <conversationDefinitionPlanners>
+        <genAiPlannerName>AeroWave_Insurance_Claim_Manager_v1</genAiPlannerName>
+    </conversationDefinitionPlanners>
+    <conversationSystemDialogs>
+        <dialog>Rich_Content_Error_Handling</dialog>
+        <type>ErrorHandling</type>
+    </conversationSystemDialogs>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Routing decision from Assess_Match_Confidence: Autonomous or Human Review</description>
+        <developerName>claim_Route</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Route</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking or claim reference the customer provided when checking an existing claim. Set only when the identifier does not contain an @ symbol.</description>
+        <developerName>status_reference</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Status Reference</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>This variable may also be referred to as VerifiedCustomerId</description>
+        <developerName>VerifiedCustomerId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Verified Customer Id</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Explanation for the payout decision returned by Compute_Payout_Amount</description>
+        <developerName>claim_PayoutReason</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Payout Reason</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Number</dataType>
+        <description>Delay in minutes returned by Compute_Payout_Amount</description>
+        <developerName>claim_DelayMinutes</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Delay Minutes</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking record identifier returned by GetClaimIdentityDetails</description>
+        <developerName>claim_BookingID</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Booking ID</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The agent instructions</description>
+        <developerName>AgentScriptInternal_agent_instructions</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Agent Instructions</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Loyalty postal code returned by GetClaimIdentityDetails</description>
+        <developerName>claim_LoyaltyZip</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Loyalty Zip</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Number</dataType>
+        <description>Identity confidence score returned by Assess_Match_Confidence</description>
+        <developerName>claim_ConfidenceScore</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Confidence Score</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Runtime condition evaluation for else-if chain link 2</description>
+        <developerName>AgentScriptInternal_condition_2</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Runtime Condition 2</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Email address the customer provided when checking an existing claim. Set only when the identifier contains an @ symbol.</description>
+        <developerName>status_email</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Status Email</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The next topic to be visited</description>
+        <developerName>AgentScriptInternal_next_topic</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Next Topic</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Loyalty program email returned by GetClaimIdentityDetails</description>
+        <developerName>claim_LoyaltyEmail</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Loyalty Email</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking phone returned by GetClaimIdentityDetails</description>
+        <developerName>claim_BookingPhone</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Booking Phone</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Flight date returned by GetClaimIdentityDetails</description>
+        <developerName>claim_Date</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Date</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Loyalty program phone returned by GetClaimIdentityDetails</description>
+        <developerName>claim_LoyaltyPhone</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Loyalty Phone</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Flight status returned by Compute_Payout_Amount</description>
+        <developerName>claim_FlightStatus</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Flight Status</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Runtime condition evaluation for if statements</description>
+        <developerName>AgentScriptInternal_condition_1</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Runtime Condition 1</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Policy identifier returned by Compute_Payout_Amount</description>
+        <developerName>claim_PolicyID</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Policy ID</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True when GetClaimIdentityDetails found a matching booking</description>
+        <developerName>claim_matchFound</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Match Found</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking reference, claim reference, or email address the customer provided when submitting a new claim</description>
+        <developerName>claim_identifier</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Identifier</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Flight number returned by GetClaimIdentityDetails</description>
+        <developerName>claim_FlightNumber</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Flight Number</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Loyalty first name returned by GetClaimIdentityDetails</description>
+        <developerName>claim_LoyaltyFirstName</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Loyalty First Name</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking first name returned by GetClaimIdentityDetails</description>
+        <developerName>claim_BookingFirstName</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Booking First Name</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking email returned by GetClaimIdentityDetails</description>
+        <developerName>claim_BookingEmail</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Booking Email</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Booking postal code returned by GetClaimIdentityDetails</description>
+        <developerName>claim_BookingZip</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Booking Zip</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Object</dataType>
+        <description>Payout amount returned by Compute_Payout_Amount</description>
+        <developerName>claim_PayoutAmount</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Claim Payout Amount</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Runtime condition evaluation for else-if chain link 3</description>
+        <developerName>AgentScriptInternal_condition_3</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Runtime Condition 3</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <copilotPrimaryLanguage>en_US</copilotPrimaryLanguage>
+    <entryDialog>Welcome</entryDialog>
+    <intentDisambiguationEnabled>false</intentDisambiguationEnabled>
+    <intentV3Enabled>false</intentV3Enabled>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <staticPromptsEnabled>false</staticPromptsEnabled>
+    <stopRecPrompts>false</stopRecPrompts>
+    <stopWelcomePrompts>false</stopWelcomePrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+</BotVersion>

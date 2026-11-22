@@ -1,0 +1,28 @@
+{
+  "required" : [ "FlightNumber", "DateText", "BookingID" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "BookingID" : {
+      "title" : "Booking ID",
+      "description" : "Booking record identifier",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "DateText" : {
+      "title" : "Date Text",
+      "description" : "Flight date as text, from GetClaimIdentityDetails",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "FlightNumber" : {
+      "title" : "Flight Number",
+      "description" : "Flight number",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
