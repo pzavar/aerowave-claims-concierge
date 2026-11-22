@@ -93,7 +93,7 @@ A score of 80 or more is approved automatically. Anything lower goes to a person
 | `force-app/main/default/aiAuthoringBundles/` | Agent script (`.agent`) for the active agent version |
 | `force-app/main/default/genAiPlannerBundles/` | Compiled planner bundle and action input/output schemas |
 | `force-app/main/default/bots/` | Agent definition and active version (v5) |
-| `force-app/main/default/flows/` | The eight Flows listed above |
+| `force-app/main/default/flows/` | Flow metadata, including the Flows listed above |
 | `force-app/main/default/classes/` | `NameMatchService.cls` |
 | `force-app/main/default/permissionsets/` | Agent permission sets |
 | `manifest/package.xml` | Manifest used to retrieve the metadata from the org |
